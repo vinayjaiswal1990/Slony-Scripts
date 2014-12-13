@@ -1,0 +1,13 @@
+## Script for switchback
+## This script moves from Subscriber Node 
+## which is acting as Origin after switchover that will 
+## move back to Older Version.
+
+cluster name = upgrade;
+node 1 admin conninfo = 'host=192.168.22.130 dbname=masterdb user=postgres port=5432';
+node 2 admin conninfo = 'host=192.168.22.131 dbname=slavedb user=postgres port=5432';
+
+LOCK SET (ID = 1, ORIGIN = 2); SYNC (id = 1);
+WAIT FOR EVENT (ORIGIN = 2, CONFIRMED = 1, WAIT ON = 1);
+MOVE SET (ID = 1, OLD ORIGIN = 2, NEW ORIGIN = 1); echo 'Set 1 has been moved from Node 1 to Node 2';
+WAIT FOR EVENT (ORIGIN = 2, CONFIRMED = 1, WAIT ON = 2);

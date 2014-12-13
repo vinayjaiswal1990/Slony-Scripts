@@ -1,0 +1,10 @@
+## Script for subscribe_set
+## Include all sets that are in Create_set.slonik
+## in the same format shown here.
+
+cluster name = upgrade;
+node 1 admin conninfo = 'host=192.168.22.130 dbname=masterdb user=postgres port=5432';
+node 2 admin conninfo = 'host=192.168.22.131 dbname=slavedb user=postgres port=5432';
+
+try { subscribe set (id = 1, provider = 1 , receiver = 2, forward = yes, omit copy = false); } on error { exit 1;}
+echo 'Set 1 subscribed to nodes 1';

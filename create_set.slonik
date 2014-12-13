@@ -1,0 +1,19 @@
+## Script for Create_set 
+## This script you need to fill with all the PK 
+## Tables that need to be replicated from Origin
+## to Subscriber node. I have added just one as sample
+
+cluster name = upgrade;
+node 1 admin conninfo = 'host=192.168.22.130 dbname=masterdb user=postgres port=5432';
+node 2 admin conninfo = 'host=192.168.22.131 dbname=slavedb user=postgres port=5432';
+
+#-----------------------------
+# Creating sets for Tables
+#-----------------------------
+#---- Set 1 --------#
+
+try { create set (id = 1, origin = 1, comment = 'Set 1 for shadow'); } on error { echo 'Failed...set 1'; exit 1;}
+echo 'Set 1 ...created';
+
+set add table (set id = 1, origin = 1, id = 1, full qualified name = 'public.foo', comment = 'Table public.foo with primary key');
+echo 'PKey table *** public.foo *** added.';

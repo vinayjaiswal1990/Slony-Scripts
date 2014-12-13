@@ -1,0 +1,13 @@
+## Script for switchover
+## This script will move Origin to 
+## Subscriber node.
+
+cluster name = upgrade;
+node 1 admin conninfo = 'host=192.168.22.130 dbname=masterdb user=postgres port=5432';
+node 2 admin conninfo = 'host=192.168.22.131 dbname=slavedb user=postgres port=5432';
+
+LOCK SET (ID = 1, ORIGIN = 1); SYNC (id = 1);
+WAIT FOR EVENT (ORIGIN = 1, CONFIRMED = 2, WAIT ON = 2);
+MOVE SET (ID = 1, OLD ORIGIN = 1, NEW ORIGIN = 2); echo 'Set 1 has been moved from Node 1 to Node 2';
+WAIT FOR EVENT (ORIGIN = 1, CONFIRMED = 2, WAIT ON = 1);
+

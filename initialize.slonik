@@ -1,0 +1,12 @@
+## Script for Initialization.
+
+cluster name = upgrade;
+node 1 admin conninfo = 'host=192.168.22.130 dbname=masterdb user=postgres port=5432';
+node 2 admin conninfo = 'host=192.168.22.131 dbname=slavedb user=postgres port=5432';
+
+init cluster (id = 1, comment = 'Primary node for slave');
+#### Setting Store Nodes ###
+store node (id = 2, event node = 1, comment = 'Slave Node For The Primary Node 1');
+#### Storing all nodes in the Slony-I catalogs in schema _upgrade
+store path(server = 1, client = 2, conninfo = 'host=192.168.22.130 dbname=masterdb user=postgres port=5432');
+store path(server = 2, client = 1, conninfo = 'host=192.168.22.131 dbname=slavedb user=postgres port=5432');
